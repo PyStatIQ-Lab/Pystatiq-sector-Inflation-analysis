@@ -21,19 +21,28 @@ def analyze_stock_data(stock_data, dates, event_data):
     analysis = []
     previous_close = None
     previous_event_rate = None
+    
     for date in dates:
         if date in stock_data.index:
             close_price = stock_data.loc[date]['Close']
             event_rate = event_data[date]
-            stock_percentage_change = ((close_price - previous_close) / previous_close) * 100 if previous_close else None
-            event_percentage_change = ((event_rate - previous_event_rate) / previous_event_rate) * 100 if previous_event_rate else None
+            
+            stock_percentage_change = ((close_price - previous_close) / previous_close) * 100 if pd.notna(previous_close) else None
+            event_percentage_change = ((event_rate - previous_event_rate) / previous_event_rate) * 100 if pd.notna(previous_event_rate) else None
+            
             analysis.append({
-                'Date': date, 'Close Price': close_price, 'Event Rate': event_rate,
-                'Stock Percentage Change': stock_percentage_change, 'Event Percentage Change': event_percentage_change
+                'Date': date, 
+                'Close Price': close_price, 
+                'Event Rate': event_rate,
+                'Stock Percentage Change': stock_percentage_change,
+                'Event Percentage Change': event_percentage_change
             })
+            
             previous_close = close_price
             previous_event_rate = event_rate
+            
     return analysis
+
 
 # Function to plot stock analysis
 def plot_stock_analysis(symbol, analysis, company_name):
